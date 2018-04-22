@@ -8,8 +8,7 @@ Since the latest privacy update, achievements of most users aren't visible anymo
 Creating your own .php to do so might require at least a couple of hours if you're not used to the WebAPI, and possibly even more if you're not used to .php .
 
 ## So here a ready-to-use .php to put on your website or on your PC if you have a local html+php server :
-- http://www.managames.com/download.php?GetSteamUserAchievements_API.zip
-- Result : http://www.managames.com/Images/GetSteamUserAchievements.jpg
+- Sample : https://github.com/manutoo/GetSteamUserAchievements/blob/master/GetSteamUserAchievements.jpg
 
 ## Features :
 - Show achievement & stat lists from any user profile URL, for all your games or a selected one
