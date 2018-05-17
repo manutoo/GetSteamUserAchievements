@@ -27,7 +27,7 @@ body, table { background-color: #001018; }
 <body>
 <div id="Main">
 <?php
-//=== Get Steam User Achievements v1.0 / By ManuTOO
+//=== Get Steam User Achievements v1.1 / By ManuTOO
 
 function Show($String)
 {
@@ -130,7 +130,12 @@ function Show($String)
 
 		if ($Index !== false)	// Vanity ID
 		{
-			$VanityID = $User = str_replace('/', '', substr($User, $Index + strlen('/id/')));
+			$VanityID = $User = substr($User, $Index + strlen('/id/'));
+
+			$Index = strpos($User, '/');
+
+			if ($Index !== false)		// Need to remove trailing ?
+				$VanityID = $User = substr($User, 0, $Index);
 
 			$Url = 'http://api.steampowered.com/ISteamUser/ResolveVanityURL/v1/?key='.$PublisherKey.'&vanityurl='.urlencode($User);
 			$Steam = file_get_contents($Url);
@@ -150,7 +155,12 @@ function Show($String)
 			$Index = strpos($User, '/profiles/');
 
 			if ($Index !== false)
-				$User = str_replace('/', '', substr($User, $Index + strlen('/profiles/')));
+				$User = substr($User, $Index + strlen('/profiles/'));
+
+			$Index = strpos($User, '/');
+
+			if ($Index !== false)		// Need to remove trailing ?
+				$User = substr($User, 0, $Index);
 
 			$SteamID = $User;
 		}
@@ -181,22 +191,23 @@ function Show($String)
 						<br/>LargeAvatar: <img src='$player->avatarfull'/>
 						";*/
 
-					echo "<h2><a href='$player->profileurl'>$player->personaname - $player->steamid</h2>
-						<img src='$player->avatarfull' /></a>"
+					echo "<h2><a href='$player->profileurl'>$player->personaname - $player->steamid</h2>"
+						."<img src='$player->avatarfull' /></a>"
 						.'<br />Last log off : '.date('Y/m/d H:i:s', $player->lastlogoff)
+						."<br /><a href='{$player->profileurl}reviews'>All Reviews"
 						."<br />\n";
 
 
 					$Found = true;
 				}
 			}
-
+			
 			//=== Show App Infos
 			if ($AppID == 0)	// Check all apps ?
 			{
 				//=== Get all owner Apps
 				$SteamUrl = 'http://api.steampowered.com/ISteamUser/GetPublisherAppOwnership/v2/?key='.$PublisherKey.'&steamid='.$SteamID;
-
+				
 				Show('<br />'.$SteamUrl);
 		
 				$json_object = file_get_contents($SteamUrl);
@@ -226,7 +237,7 @@ function Show($String)
 	
 function CheckApp($AppID, $SkipIfNoName = false)
 {
-	global $PublisherKey, $SteamID, $VanityID, $UserFromReview;
+	global $PublisherKey, $SteamID, $VanityID, $UserFromReview, $SortAchievement;
 	
 	//=== Grab Achievements Details
 	$SteamUrl = 'http://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v2/?key='.$PublisherKey.'&appid='.$AppID;
@@ -318,12 +329,15 @@ function CheckApp($AppID, $SkipIfNoName = false)
 		//print_r($http_response_header);
 	}
 	
-	//=== Show Ownersip details
+	//=== Show Ownership details
 	echo '<h3>App Ownership:</h3>'."\n";
 	
 	foreach ($json_decoded->appownership as $Key => $Value)
 	{
-		echo "&nbsp;&nbsp;&nbsp;$Key: $Value<br />\n";
+		if ($Key == 'ownersteamid' && $Value != $SteamID && $Value != '0')
+			echo "&nbsp;&nbsp;&nbsp;$Key: <a href='https://steamcommunity.com/profiles/$Value'>$Value</a><br />\n";		
+		else
+			echo "&nbsp;&nbsp;&nbsp;$Key: $Value<br />\n";
 	}
 	
 	//=== Show all Achievements
@@ -337,7 +351,7 @@ function CheckApp($AppID, $SkipIfNoName = false)
 	Show('NbAchievDesc: '.count($AchievementDesc));
 	
 	if ($SortAchievement)
-	{			
+	{
 		function CompareAchievement($a, $b)
 		{
 			return $a->unlocktime > $b->unlocktime;
