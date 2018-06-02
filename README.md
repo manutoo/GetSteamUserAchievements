@@ -20,8 +20,9 @@ Creating your own .php to do so might require at least a couple of hours if you'
 - set your API Key in $PublisherKey (HowTo find it : https://partner.steamgames.com/doc/webapi_overview/auth )
 - set your game list in $GameList (optional)
 
-## And 1 optional thing to do if you put this .php on a public server :
+## And 2 optional things to do if you put this .php on a public server :
 - rename the .php and update "form action=" accordingly, and/or put it in a password protected folder
+- remove the debug option by commenting out the line starting with "$Debug = isset", if someone using this tool isn't supposed to know your Publisher API Key
 
 ## Quick Search with Firefox
 With Firefox, you can create a custom search like this https://support.mozilla.org/en-US/kb/how-search-from-address-bar , which allows to very quickly get the achievement list when reading a review or checking a user profile (eg, just entering in the URL bar: "u <ReviewURL | User Profile URL>")
