@@ -235,6 +235,11 @@ function Show($String)
 		}
 	}
 	
+function CompareAchievement($a, $b)
+{
+	return $a->unlocktime > $b->unlocktime;
+}
+	
 function CheckApp($AppID, $SkipIfNoName = false)
 {
 	global $PublisherKey, $SteamID, $VanityID, $UserFromReview, $SortAchievement;
@@ -352,11 +357,6 @@ function CheckApp($AppID, $SkipIfNoName = false)
 	
 	if ($SortAchievement)
 	{
-		function CompareAchievement($a, $b)
-		{
-			return $a->unlocktime > $b->unlocktime;
-		}
-
 		usort($AchievementList->playerstats->achievements, 'CompareAchievement');
 	}
 	
@@ -417,6 +417,7 @@ function CheckApp($AppID, $SkipIfNoName = false)
 	foreach ($StatList->playerstats->stats as $UserStat)
 	{
 		//echo $UserStat->name.'<br />';
+		$Found = false;
 		
 		foreach ($StatDesc as $Desc)
 		{
@@ -430,8 +431,21 @@ function CheckApp($AppID, $SkipIfNoName = false)
 				echo $UserStat->value;
 				echo '</td></tr>'."\n";
 				
+				$Found = true;
+				
 				break;
 			}
+		}
+		
+		if (!$Found)		// Only needed when adding a new Stat and Steam has still a cached older version
+		{
+			echo '<tr><td>';
+				
+			echo $UserStat->name;
+			echo '</td><td>';
+			
+			echo $UserStat->value;
+			echo '</td></tr>'."\n";
 		}
 	}
 	
